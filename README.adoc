@@ -41,7 +41,7 @@ Pour les utilisateurs de _Homebrew_, il est aussi possible d'installer SolR via 
 
 === Lancement
 
-Se positionner dans le répertoire `bin`, puis lancer la commande :
+Se positionner à la racine du répertoire décompressé, puis lancer la commande :
 
 [source,bash]
 ----
