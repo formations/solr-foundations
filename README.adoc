@@ -99,7 +99,7 @@ http://localhost:8983/solr/admin/cores?action=CREATE&name=films&instanceDir=film
 
 Il est possible de vérifier le succès de l'opération:
 
-1. dans le système de fichiers: `solr-6.21/server/films`
+1. dans le système de fichiers: `server/solr/films`
 1. dans http://localhost:8983/solr/#/~cores/films[l'interface graphique^]
 
 === Ajout de données
