@@ -1,0 +1,263 @@
+= Tutoriel SolR
+Nicolas Frankel
+:doctype: article
+:encoding: utf-8
+:lang: fr
+:toc:
+:toc-placement!:
+:sectanchors:
+:numbered:
+:icons: font
+:imagesdir: images
+
+image::https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png[Licence Creative Commons, link="http://creativecommons.org/licenses/by-nc-sa/4.0/"]
+
+Ce cours est mis à disposition selon les termes de la http://creativecommons.org/licenses/by-nc-sa/4.0/[Licence Creative Commons Attribution - Pas d’Utilisation Commerciale - Partage dans les Mêmes Conditions 4.0 International].
+
+toc::[]
+
+== Références
+
+* https://cwiki.apache.org/confluence/display/solr/Apache+Solr+Reference+Guide[Apache Solr Reference Guide [EN\]^]
+
+== Mise en place
+
+=== Prérequis
+
+SolR nécessite l'installation préalable d'un https://cwiki.apache.org/confluence/display/solr/Installing+Solr#InstallingSolr-GotJava?[Java Runtime Environment^] version 1.8+.
+
+Télécharger et installer http://www.oracle.com/technetwork/java/javase/downloads/index.html[l'option adéquate^] en fonction du système d'exploitation.
+
+=== Installation
+
+Il n'y a pas d'installation à proprement parler, il suffit de https://lucene.apache.org/solr/mirrors-solr-latest-redir.html[télécharger l'archive^] et de la décompresser.
+
+image::directory-structure.png[Structure du répertoire SolR,198,400,align="center"]
+
+[NOTE]
+====
+Pour les utilisateurs de _Homebrew_, il est aussi possible d'installer SolR via la commande `brew install solr`.
+====
+
+=== Lancement
+
+Se positionner dans le répertoire `bin`, puis lancer la commande :
+
+[source,bash]
+----
+bin/solr start
+----
+
+Vérifier que SolR est lancé en à l'aide de la commande :
+
+[source,bash]
+----
+bin/solr status
+----
+
+Le résultat est similaire à la sortie suivante :
+
+----
+Found 1 Solr nodes: 
+
+Solr process 15840 running on port 8983
+{
+  "solr_home":"/Users/i303869/Downloads/solr-6.2.1/server/solr",
+  "version":"6.2.1 43ab70147eb494324a1410f7a9f16a896a59bc6f - shalin - 2016-09-15 05:20:53",
+  "startTime":"2016-10-29T15:04:01.454Z",
+  "uptime":"0 days, 0 hours, 31 minutes, 39 seconds",
+  "memory":"40.9 MB (%8.3) of 490.7 MB"}
+----
+
+SolR dispose d'une interface graphique accessible à l'adresse http://localhost:8983/solr[http://localhost:8983/solr^].
+
+image::solr-ui.png[Interface graphique SolR,980,554,align="center"]
+
+== Initialisation
+
+=== Création de _core_
+
+Sur l'écran précédent, il est mentionné qu'il n'y a pas de _core_: un _core_ est l'emplacement de stockage de l'index. Avant toute manipulation, il est nécessaire d'initialiser cet index.
+
+[source,bash]
+----
+bin/solr create -c films
+----
+
+Le résultat attendu doit être le suivant :
+
+----
+Creating new core 'films' using command:
+http://localhost:8983/solr/admin/cores?action=CREATE&name=films&instanceDir=films
+
+{
+  "responseHeader":{
+    "status":0,
+    "QTime":1005},
+  "core":"films"}
+----
+
+Il est possible de vérifier le succès de l'opération:
+
+1. dans le système de fichiers: `solr-6.21/server/films`
+1. dans http://localhost:8983/solr/#/~cores/films[l'interface graphique^]
+
+=== Ajout de données
+
+Le _core_ créé précédemment est vide et est donc inutile. Pour aller plus loin, il est nécessaire d'aller d'ajouter des données.
+
+[source,bash]
+----
+bin/post -c films example/films/films.json
+----
+
+Le résultat doit être semblable au suivant :
+
+----
+java -classpath /Users/i303869/Downloads/solr-6.2.1/dist/solr-core-6.2.1.jar -Dauto=yes -Dc=films -Ddata=files org.apache.solr.util.SimplePostTool ../example/films/films.json
+SimplePostTool version 5.0.0
+Posting files to [base] url http://localhost:8983/solr/films/update...
+Entering auto mode. File endings considered are xml,json,jsonl,csv,pdf,doc,docx,ppt,pptx,xls,xlsx,odt,odp,ods,ott,otp,ots,rtf,htm,html,txt,log
+POSTing file films.json (application/json) to [base]/json/docs
+SimplePostTool: WARNING: Solr returned an error #400 (Bad Request) for url: http://localhost:8983/solr/films/update/json/docs
+SimplePostTool: WARNING: Response: {"responseHeader":{"status":400,"QTime":109},"error":{"metadata":["error-class","org.apache.solr.common.SolrException","root-error-class","java.lang.NumberFormatException"],"msg":"ERROR: [doc=/en/quien_es_el_senor_lopez] Error adding field 'name'='¿Quién es el señor López?' msg=For input string: \"¿Quién es el señor López?\"","code":400}}
+SimplePostTool: WARNING: IOException while reading response: java.io.IOException: Server returned HTTP response code: 400 for URL: http://localhost:8983/solr/films/update/json/docs
+1 files indexed.
+COMMITting Solr index changes to http://localhost:8983/solr/films/update...
+Time spent: 0:00:00.271
+----
+
+== Modification du schéma
+
+Dans cette version de SolR, le schéma est créé lors du premier ajout de données en inférant les champs et leur type. L'erreur précédente provient d'un décalage entre le type du premier élément pour le champ `name` dans le fichier d'exemple et le type des éléments suivants.
+
+Vérifier le type du champ `name` à l'aide de http://localhost:8983/solr/#/films/schema?field=name[l'interface graphique^]. Cette information est également disponible dans le fichier de configuration.
+
+[source,xml]
+.server/solr/films/conf/managed-schema
+----
+<field name="name" type="tdoubles"/>
+----
+
+[source,json]
+.example/films/films.json
+----
+{
+  "id": "/en/quien_es_el_senor_lopez",
+  "directed_by": [
+    "Luis Mandoki"
+  ],
+  "genre": [
+    "Documentary film"
+  ],
+  "name": "\u00bfQui\u00e9n es el se\u00f1or L\u00f3pez?"
+}
+----
+
+[NOTE]
+====
+L'ajout d'entrées dans l'index est séquentiel. Vérifier que les entrées précédentes du fichier sont bien compatibles avec le type `tdoubles`.
+====
+
+Pour modifier le schéma, trois options sont possibles :
+
+1. Editer le fichier `server/solr/films/conf/managed-schema`. Il est alors nécessaire de redémarrer le serveur pour prendre en compte les modifications. De plus, l'accès au système de fichiers n'est généralement pas autorisé.
+1. Utiliser l'http://localhost:8983/solr/#/films/schema?field=name[interface disponible]
+1. Exécuter un appel l'https://cwiki.apache.org/confluence/display/solr/Schema+API[API de gestion de schéma^]
+
+Retenter alors l'indexation comme ci-dessus. Le résultat doit maintenant être différent :
+
+----
+java -classpath /Users/i303869/Downloads/solr-6.2.1/dist/solr-core-6.2.1.jar -Dauto=yes -Dc=films -Ddata=files org.apache.solr.util.SimplePostTool ../example/films/films.json
+SimplePostTool version 5.0.0
+Posting files to [base] url http://localhost:8983/solr/films/update...
+Entering auto mode. File endings considered are xml,json,jsonl,csv,pdf,doc,docx,ppt,pptx,xls,xlsx,odt,odp,ods,ott,otp,ots,rtf,htm,html,txt,log
+POSTing file films.json (application/json) to [base]/json/docs
+1 files indexed.
+COMMITting Solr index changes to http://localhost:8983/solr/films/update...
+Time spent: 0:00:00.471
+----
+
+## Exécution de requêtes
+
+L'exécution de requêtes se fait par l'intermédiaire d'une https://cwiki.apache.org/confluence/display/solr/JSON+Request+API[API REST^].
+
+Afin d'expérimenter avec celle-ci, il est possible d'utiliser : 
+
+* La commande `curl` (systèmes *Nix)
+* L'http://localhost:8983/solr/#/films/query[interface graphique^]. Celle-ci génère également l'URL complète.
+* https://www.getpostman.com/[Postman^]
+
+[TIP]
+====
+L'utilisation de Postman est recommandé : il s'agit d'une application qui permet d'exécuter des appels REST et de les sauvegarder pour un usage futur. Elle permet également d'exporter chaque requête en tant qu'URL (comme pour l'interface SolR).
+====
+
+### Requête basique
+
+Exécuter la requête suivante :
+
+[source,bash]
+----
+curl 'http://localhost:8983/solr/films/select?indent=on&q=*:*&wt=json'
+----
+
+Analyser la réponse retournée :
+
+* Le nombre d'éléments de la réponse
+* Le nombre d'éléments totaux
+* La différence entre la structure de la réponse et la structure du fichier JSON original (`example/films/films.json`)
+
+### Quelques fonctionnalités
+
+Limite des champs de résultat:: // TODO
+Limite du nombre d'éléments:: Par défaut, le nombre d'éléments retournés est de 10. Cette valeur par défaut peut être modifiée à l'aide du paramètre `rows`.
++
+Limiter le résultat à 12 éléments.
+// http://localhost:8983/solr/films/select?q=*:*&rows=12
+Tri:: L'ensemble des éléments retournés peut être trié en utilisant le paramètre `sort` avec le nom du champ et `asc`/`desc`.
++
+Trier les résultats par ordre inverse de leur `name`.
+// http://localhost:8983/solr/films/select?q=*:*&sort=name%20desc
+Terme de recherche:: Le paramètre de requête est `q=\*:*`. Ce paramètre indique que la `q`(_uery_) est `\*:*`. Le premier caractère joker est le champ de recherche, le second le terme de recherche. Si aucun champ n'est spécifié, la recherche s'effectue dans le champ par défaut `\_text_`.
++
+Limiter les résultats aux éléments comprenant le terme "john".
+// http://localhost:8983/solr/films/select?q=john
++
+Effectuer la même requête mais en limitant le terme au champ `name`. Comparer les résultats.
+// http://localhost:8983/solr/films/select?q=name:john
+Opérateurs booléens:: Le paramètre `q` accepte la combinaison de termes via les opérateurs booléens `AND` et `OR`. Cette combinaison peut être appliquée que le terme s'applique à un champ ou non.
++
+1. Limiter les résultats aux éléments comprenant le terme "john" et "thriller".
+// http://localhost:8983/solr/films/select?q=john%20AND%20thriller
+1. Puis, exécuter une nouvelle requête en limitant les résultats comportant les termes "fun" dans le champ `name` et "Comedy" dans le champ `genre`.
+// http://localhost:8983/solr/films/select?q=name:fun%20AND%20genre:Comedy
+Recherche à facettes:: La https://fr.wikipedia.org/wiki/Recherche_%C3%A0_facettes[recherche à facettes^] permet d'implémenter la fonctionnalité "classique" de recherche par catégorie dans les sites d'e-commerce, par exemple par couleur. Si l'on adopte un point de vue SQL, il s'agit de la combinaison de commandes `GROUP BY` et `COUNT`.
++
+Pour effectuer une recherche à facettes, utiliser les paramètres suivants :
++
+    * `facet`
+    * `facet.field` avec comme valeur le champ sur lequel doit s'exercer la facette
++
+Exécuter une recherche à facettes sur le champ `genre`. Analyser la structure du résultat retourné.
+// http://localhost:8983/solr/films/select?facet.field=directed_by&facet=on&q=*:*
++
+[TIP]
+====
+Pour ajouter une facette à _chaque_ requête, il est possible d'utiliser l'https://cwiki.apache.org/confluence/display/solr/Request+Parameters+API[API de paramètres de requête^].
+====
+Balisage:: La fonctionnalité de balisage permet de retourner une structure comportant déjà des balises autour des termes de recherche dans les résultats. Il suffit d'ajouter les paramètres :
++
+    * `hl=true`
+    * `hl.fl` avec pour valeur le nom du champ qui doit recevoir le balisage
++
+Par défaut, la balise est `<em>` mais il est possible de personnaliser le balisage avec les paramètres respectifs `hl.simple.pre` pour la balise de début et `hl.simple.post` pour la balise de fin.
++
+Exécuter à nouveau la requête sur le terme "john" dans le champ `name` en activant cette fois le balisage sur ce champ. Analyse la structure du résultat.
+// http://localhost:8983/solr/films/select?q=name:john&hl=true&hl.fl=name
+
+## Analyser l'index
+
+En utilisant le paramètre précédent, chercher les films dont un des _genre_ est "thriller". Quel est le résultat?
+
+Champs multi-valués:: l
