@@ -62,7 +62,7 @@ Found 1 Solr nodes:
 
 Solr process 15840 running on port 8983
 {
-  "solr_home":"/Users/i303869/Downloads/solr-6.2.1/server/solr",
+  "solr_home":"~/solr-6.2.1/server/solr",
   "version":"6.2.1 43ab70147eb494324a1410f7a9f16a896a59bc6f - shalin - 2016-09-15 05:20:53",
   "startTime":"2016-10-29T15:04:01.454Z",
   "uptime":"0 days, 0 hours, 31 minutes, 39 seconds",
@@ -104,7 +104,7 @@ Il est possible de vérifier le succès de l'opération:
 
 === Ajout de données
 
-Le _core_ créé précédemment est vide et est donc inutile. Pour aller plus loin, il est nécessaire d'aller d'ajouter des données.
+Le _core_ créé précédemment est vide et est donc inutile. Pour aller plus loin, il est nécessaire d'aller d'ajouter des données. Il existe plusieurs sources de données exemple, utilisons l'une d'entre elles avec l'outil fourni:
 
 [source,bash]
 ----
@@ -114,7 +114,7 @@ bin/post -c films example/films/films.json
 Le résultat doit être semblable au suivant :
 
 ----
-java -classpath /Users/i303869/Downloads/solr-6.2.1/dist/solr-core-6.2.1.jar -Dauto=yes -Dc=films -Ddata=files org.apache.solr.util.SimplePostTool ../example/films/films.json
+java -classpath ~/solr-6.2.1/dist/solr-core-6.2.1.jar -Dauto=yes -Dc=films -Ddata=files org.apache.solr.util.SimplePostTool ../example/films/films.json
 SimplePostTool version 5.0.0
 Posting files to [base] url http://localhost:8983/solr/films/update...
 Entering auto mode. File endings considered are xml,json,jsonl,csv,pdf,doc,docx,ppt,pptx,xls,xlsx,odt,odp,ods,ott,otp,ots,rtf,htm,html,txt,log
@@ -159,16 +159,17 @@ Vérifier le type du champ `name` à l'aide de http://localhost:8983/solr/#/film
 L'ajout d'entrées dans l'index est séquentiel. Vérifier que les entrées précédentes du fichier sont bien compatibles avec le type `tdoubles`.
 ====
 
-Pour modifier le schéma, trois options sont possibles :
+Pour modifier le schéma, deux options sont possibles :
 
 1. Editer le fichier `server/solr/films/conf/managed-schema`. Il est alors nécessaire de redémarrer le serveur pour prendre en compte les modifications. De plus, l'accès au système de fichiers n'est généralement pas autorisé.
-1. Utiliser l'http://localhost:8983/solr/#/films/schema?field=name[interface disponible]
 1. Exécuter un appel l'https://cwiki.apache.org/confluence/display/solr/Schema+API[API de gestion de schéma^]
+
+En utilisant l'une des deux méthodes proposées, de préférence la seconde, modifier le type du champ `name` en `text_general`.
 
 Retenter alors l'indexation comme ci-dessus. Le résultat doit maintenant être différent :
 
 ----
-java -classpath /Users/i303869/Downloads/solr-6.2.1/dist/solr-core-6.2.1.jar -Dauto=yes -Dc=films -Ddata=files org.apache.solr.util.SimplePostTool ../example/films/films.json
+java -classpath ~/solr-6.2.1/dist/solr-core-6.2.1.jar -Dauto=yes -Dc=films -Ddata=files org.apache.solr.util.SimplePostTool ../example/films/films.json
 SimplePostTool version 5.0.0
 Posting files to [base] url http://localhost:8983/solr/films/update...
 Entering auto mode. File endings considered are xml,json,jsonl,csv,pdf,doc,docx,ppt,pptx,xls,xlsx,odt,odp,ods,ott,otp,ots,rtf,htm,html,txt,log
