@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.6.1">
+<meta name="author" content="Nicolas Frankel">
+<title>Tutoriel SolR</title>
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+</head>
+<body class="article">
+<div id="header">
+<h1>Tutoriel SolR</h1>
+<div class="details">
+<span id="author" class="author">Nicolas Frankel</span><br>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><span class="image left"><a class="image" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" alt="Licence Creative Commons"></a></span></p>
+</div>
+<div class="paragraph">
+<p>Ce document est mis à disposition selon les termes de la <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Licence Creative Commons Attribution - Pas d’Utilisation Commerciale - Partage dans les Mêmes Conditions 4.0 International</a>.</p>
+</div>
+<div id="toc" class="toc">
+<div id="toctitle" class="title">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_références">1. Références</a></li>
+<li><a href="#_mise_en_place">2. Mise en place</a>
+<ul class="sectlevel2">
+<li><a href="#_prérequis">2.1. Prérequis</a></li>
+<li><a href="#_installation">2.2. Installation</a></li>
+<li><a href="#_lancement">2.3. Lancement</a></li>
+</ul>
+</li>
+<li><a href="#_initialisation">3. Initialisation</a>
+<ul class="sectlevel2">
+<li><a href="#_création_de_em_core_em">3.1. Création de <em>core</em></a></li>
+<li><a href="#_ajout_de_données">3.2. Ajout de données</a></li>
+</ul>
+</li>
+<li><a href="#_modification_du_schéma">4. Modification du schéma</a></li>
+<li><a href="#_exécution_de_requêtes">5. Exécution de requêtes</a>
+<ul class="sectlevel2">
+<li><a href="#_requête_basique">5.1. Requête basique</a></li>
+<li><a href="#_quelques_fonctionnalités">5.2. Quelques fonctionnalités</a></li>
+</ul>
+</li>
+<li><a href="#_analyser_l_index">6. Analyser l&#8217;index</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_références"><a class="anchor" href="#_références"></a>1. Références</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://cwiki.apache.org/confluence/display/solr/Apache+Solr+Reference+Guide" target="_blank" rel="noopener">Apache Solr Reference Guide [EN]</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_mise_en_place"><a class="anchor" href="#_mise_en_place"></a>2. Mise en place</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_prérequis"><a class="anchor" href="#_prérequis"></a>2.1. Prérequis</h3>
+<div class="paragraph">
+<p>SolR nécessite l&#8217;installation préalable d&#8217;un <a href="https://cwiki.apache.org/confluence/display/solr/Installing+Solr#InstallingSolr-GotJava?" target="_blank" rel="noopener">Java Runtime Environment</a> version 1.8+.</p>
+</div>
+<div class="paragraph">
+<p>Télécharger et installer <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html" target="_blank" rel="noopener">l&#8217;option adéquate</a> en fonction du système d&#8217;exploitation.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_installation"><a class="anchor" href="#_installation"></a>2.2. Installation</h3>
+<div class="paragraph">
+<p>Il n&#8217;y a pas d&#8217;installation à proprement parler, il suffit de <a href="https://lucene.apache.org/solr/mirrors-solr-latest-redir.html" target="_blank" rel="noopener">télécharger l&#8217;archive</a> et de la décompresser.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="images/directory-structure.png" alt="Structure du répertoire SolR" width="198" height="400">
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Pour les utilisateurs de <em>Homebrew</em>, il est aussi possible d&#8217;installer SolR via la commande <code>brew install solr</code>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_lancement"><a class="anchor" href="#_lancement"></a>2.3. Lancement</h3>
+<div class="paragraph">
+<p>Se positionner à la racine du répertoire décompressé, puis lancer la commande :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">bin/solr start</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Vérifier que SolR est lancé en à l&#8217;aide de la commande :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">bin/solr status</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Le résultat est similaire à la sortie suivante :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Found 1 Solr nodes:
+
+Solr process 15840 running on port 8983
+{
+  "solr_home":"~/solr-6.2.1/server/solr",
+  "version":"6.2.1 43ab70147eb494324a1410f7a9f16a896a59bc6f - shalin - 2016-09-15 05:20:53",
+  "startTime":"2016-10-29T15:04:01.454Z",
+  "uptime":"0 days, 0 hours, 31 minutes, 39 seconds",
+  "memory":"40.9 MB (%8.3) of 490.7 MB"}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>SolR dispose d&#8217;une interface graphique accessible à l&#8217;adresse <a href="http://localhost:8983/solr" target="_blank" rel="noopener">http://localhost:8983/solr</a>.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="images/solr-ui.png" alt="Interface graphique SolR" width="980" height="554">
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_initialisation"><a class="anchor" href="#_initialisation"></a>3. Initialisation</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_création_de_em_core_em"><a class="anchor" href="#_création_de_em_core_em"></a>3.1. Création de <em>core</em></h3>
+<div class="paragraph">
+<p>Sur l&#8217;écran précédent, il est mentionné qu&#8217;il n&#8217;y a pas de <em>core</em>: un <em>core</em> est l&#8217;emplacement de stockage de l&#8217;index. Avant toute manipulation, il est nécessaire d&#8217;initialiser cet index.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">bin/solr create -c films</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Le résultat attendu doit être le suivant :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Creating new core 'films' using command:
+http://localhost:8983/solr/admin/cores?action=CREATE&amp;name=films&amp;instanceDir=films
+
+{
+  "responseHeader":{
+    "status":0,
+    "QTime":1005},
+  "core":"films"}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Il est possible de vérifier le succès de l&#8217;opération:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>dans le système de fichiers: <code>server/solr/films</code></p>
+</li>
+<li>
+<p>dans <a href="http://localhost:8983/solr/#/~cores/films" target="_blank" rel="noopener">l&#8217;interface graphique</a></p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ajout_de_données"><a class="anchor" href="#_ajout_de_données"></a>3.2. Ajout de données</h3>
+<div class="paragraph">
+<p>Le <em>core</em> créé précédemment est vide et est donc inutile. Pour aller plus loin, il est nécessaire d&#8217;aller d&#8217;ajouter des données. Il existe plusieurs sources de données exemple, utilisons l&#8217;une d&#8217;entre elles avec l&#8217;outil fourni:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">bin/post -c films example/films/films.json</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Le résultat doit être semblable au suivant :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>java -classpath ~/solr-6.2.1/dist/solr-core-6.2.1.jar -Dauto=yes -Dc=films -Ddata=files org.apache.solr.util.SimplePostTool ../example/films/films.json
+SimplePostTool version 5.0.0
+Posting files to [base] url http://localhost:8983/solr/films/update...
+Entering auto mode. File endings considered are xml,json,jsonl,csv,pdf,doc,docx,ppt,pptx,xls,xlsx,odt,odp,ods,ott,otp,ots,rtf,htm,html,txt,log
+POSTing file films.json (application/json) to [base]/json/docs
+SimplePostTool: WARNING: Solr returned an error #400 (Bad Request) for url: http://localhost:8983/solr/films/update/json/docs
+SimplePostTool: WARNING: Response: {"responseHeader":{"status":400,"QTime":109},"error":{"metadata":["error-class","org.apache.solr.common.SolrException","root-error-class","java.lang.NumberFormatException"],"msg":"ERROR: [doc=/en/quien_es_el_senor_lopez] Error adding field 'name'='¿Quién es el señor López?' msg=For input string: \"¿Quién es el señor López?\"","code":400}}
+SimplePostTool: WARNING: IOException while reading response: java.io.IOException: Server returned HTTP response code: 400 for URL: http://localhost:8983/solr/films/update/json/docs
+1 files indexed.
+COMMITting Solr index changes to http://localhost:8983/solr/films/update...
+Time spent: 0:00:00.271</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_modification_du_schéma"><a class="anchor" href="#_modification_du_schéma"></a>4. Modification du schéma</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Dans cette version de SolR, le schéma est créé lors du premier ajout de données en inférant les champs et leur type. L&#8217;erreur précédente provient d&#8217;un décalage entre le type du premier élément pour le champ <code>name</code> dans le fichier d&#8217;exemple et le type des éléments suivants.</p>
+</div>
+<div class="paragraph">
+<p>Vérifier le type du champ <code>name</code> à l&#8217;aide de <a href="http://localhost:8983/solr/#/films/schema?field=name" target="_blank" rel="noopener">l&#8217;interface graphique</a>. Cette information est également disponible dans le fichier de configuration.</p>
+</div>
+<div class="listingblock">
+<div class="title">server/solr/films/conf/managed-schema</div>
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;field name="name" type="tdoubles"/&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">example/films/films.json</div>
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "id": "/en/quien_es_el_senor_lopez",
+  "directed_by": [
+    "Luis Mandoki"
+  ],
+  "genre": [
+    "Documentary film"
+  ],
+  "name": "\u00bfQui\u00e9n es el se\u00f1or L\u00f3pez?"
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>L&#8217;ajout d&#8217;entrées dans l&#8217;index est séquentiel. Vérifier que les entrées précédentes du fichier sont bien compatibles avec le type <code>tdoubles</code>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Pour modifier le schéma, deux options sont possibles :</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Editer le fichier <code>server/solr/films/conf/managed-schema</code>. Il est alors nécessaire de redémarrer le serveur pour prendre en compte les modifications. De plus, l&#8217;accès au système de fichiers n&#8217;est généralement pas autorisé.</p>
+</li>
+<li>
+<p>Exécuter un appel l&#8217;<a href="https://cwiki.apache.org/confluence/display/solr/Schema+API" target="_blank" rel="noopener">API de gestion de schéma</a></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>En utilisant l&#8217;une des deux méthodes proposées, de préférence la seconde, modifier le type du champ <code>name</code> en <code>text_general</code>.</p>
+</div>
+<div class="paragraph">
+<p>Retenter alors l&#8217;indexation comme ci-dessus. Le résultat doit maintenant être différent :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>java -classpath ~/solr-6.2.1/dist/solr-core-6.2.1.jar -Dauto=yes -Dc=films -Ddata=files org.apache.solr.util.SimplePostTool ../example/films/films.json
+SimplePostTool version 5.0.0
+Posting files to [base] url http://localhost:8983/solr/films/update...
+Entering auto mode. File endings considered are xml,json,jsonl,csv,pdf,doc,docx,ppt,pptx,xls,xlsx,odt,odp,ods,ott,otp,ots,rtf,htm,html,txt,log
+POSTing file films.json (application/json) to [base]/json/docs
+1 files indexed.
+COMMITting Solr index changes to http://localhost:8983/solr/films/update...
+Time spent: 0:00:00.471</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_exécution_de_requêtes"><a class="anchor" href="#_exécution_de_requêtes"></a>5. Exécution de requêtes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>L&#8217;exécution de requêtes se fait par l&#8217;intermédiaire d&#8217;une <a href="https://cwiki.apache.org/confluence/display/solr/JSON+Request+API" target="_blank" rel="noopener">API REST</a>.</p>
+</div>
+<div class="paragraph">
+<p>Afin d&#8217;expérimenter avec celle-ci, il est possible d&#8217;utiliser :</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>La commande <code>curl</code> (systèmes *Nix)</p>
+</li>
+<li>
+<p>L&#8217;<a href="http://localhost:8983/solr/#/films/query" target="_blank" rel="noopener">interface graphique</a>. Celle-ci génère également l&#8217;URL complète.</p>
+</li>
+<li>
+<p><a href="https://www.getpostman.com/" target="_blank" rel="noopener">Postman</a></p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>L&#8217;utilisation de Postman est recommandé : il s&#8217;agit d&#8217;une application qui permet d&#8217;exécuter des appels REST et de les sauvegarder pour un usage futur. Elle permet également d&#8217;exporter chaque requête en tant qu&#8217;URL (comme pour l&#8217;interface SolR).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_requête_basique"><a class="anchor" href="#_requête_basique"></a>5.1. Requête basique</h3>
+<div class="paragraph">
+<p>Exécuter la requête suivante :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">curl 'http://localhost:8983/solr/films/select?indent=on&amp;q=*:*&amp;wt=json'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Analyser la réponse retournée :</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Le nombre d&#8217;éléments de la réponse</p>
+</li>
+<li>
+<p>Le nombre d&#8217;éléments totaux</p>
+</li>
+<li>
+<p>La différence entre la structure de la réponse et la structure du fichier JSON original (<code>example/films/films.json</code>)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_quelques_fonctionnalités"><a class="anchor" href="#_quelques_fonctionnalités"></a>5.2. Quelques fonctionnalités</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Limite des champs de résultat</dt>
+<dd>
+<p>// TODO</p>
+</dd>
+<dt class="hdlist1">Limite du nombre d&#8217;éléments</dt>
+<dd>
+<p>Par défaut, le nombre d&#8217;éléments retournés est de 10. Cette valeur par défaut peut être modifiée à l&#8217;aide du paramètre <code>rows</code>.</p>
+<div class="paragraph">
+<p>Limiter le résultat à 12 éléments.</p>
+</div>
+</dd>
+<dt class="hdlist1">Tri</dt>
+<dd>
+<p>L&#8217;ensemble des éléments retournés peut être trié en utilisant le paramètre <code>sort</code> avec le nom du champ et <code>asc</code>/<code>desc</code>.</p>
+<div class="paragraph">
+<p>Trier les résultats par ordre inverse de leur <code>name</code>.</p>
+</div>
+</dd>
+<dt class="hdlist1">Terme de recherche</dt>
+<dd>
+<p>Le paramètre de requête est <code>q=*:*</code>. Ce paramètre indique que la <code>q</code>(<em>uery</em>) est <code>*:*</code>. Le premier caractère joker est le champ de recherche, le second le terme de recherche. Si aucun champ n&#8217;est spécifié, la recherche s&#8217;effectue dans le champ par défaut <code>_text_</code>.</p>
+<div class="paragraph">
+<p>Limiter les résultats aux éléments comprenant le terme "john".</p>
+</div>
+<div class="paragraph">
+<p>Effectuer la même requête mais en limitant le terme au champ <code>name</code>. Comparer les résultats.</p>
+</div>
+</dd>
+<dt class="hdlist1">Opérateurs booléens</dt>
+<dd>
+<p>Le paramètre <code>q</code> accepte la combinaison de termes via les opérateurs booléens <code>AND</code> et <code>OR</code>. Cette combinaison peut être appliquée que le terme s&#8217;applique à un champ ou non.</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Limiter les résultats aux éléments comprenant le terme "john" et "thriller".</p>
+</li>
+<li>
+<p>Puis, exécuter une nouvelle requête en limitant les résultats comportant les termes "fun" dans le champ <code>name</code> et "Comedy" dans le champ <code>genre</code>.</p>
+</li>
+</ol>
+</div>
+</dd>
+<dt class="hdlist1">Recherche à facettes</dt>
+<dd>
+<p>La <a href="https://fr.wikipedia.org/wiki/Recherche_%C3%A0_facettes" target="_blank" rel="noopener">recherche à facettes</a> permet d&#8217;implémenter la fonctionnalité "classique" de recherche par catégorie dans les sites d&#8217;e-commerce, par exemple par couleur. Si l&#8217;on adopte un point de vue SQL, il s&#8217;agit de la combinaison de commandes <code>GROUP BY</code> et <code>COUNT</code>.</p>
+<div class="paragraph">
+<p>Pour effectuer une recherche à facettes, utiliser les paramètres suivants :</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>facet</code></p>
+</li>
+<li>
+<p><code>facet.field</code> avec comme valeur le champ sur lequel doit s&#8217;exercer la facette</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Exécuter une recherche à facettes sur le champ <code>genre</code>. Analyser la structure du résultat retourné.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Pour ajouter une facette à <em>chaque</em> requête, il est possible d&#8217;utiliser l&#8217;<a href="https://cwiki.apache.org/confluence/display/solr/Request+Parameters+API" target="_blank" rel="noopener">API de paramètres de requête</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</dd>
+<dt class="hdlist1">Balisage</dt>
+<dd>
+<p>La fonctionnalité de balisage permet de retourner une structure comportant déjà des balises autour des termes de recherche dans les résultats. Il suffit d&#8217;ajouter les paramètres :</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>hl=true</code></p>
+</li>
+<li>
+<p><code>hl.fl</code> avec pour valeur le nom du champ qui doit recevoir le balisage</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Par défaut, la balise est <code>&lt;em&gt;</code> mais il est possible de personnaliser le balisage avec les paramètres respectifs <code>hl.simple.pre</code> pour la balise de début et <code>hl.simple.post</code> pour la balise de fin.</p>
+</div>
+<div class="paragraph">
+<p>Exécuter à nouveau la requête sur le terme "john" dans le champ <code>name</code> en activant cette fois le balisage sur ce champ. Analyse la structure du résultat.</p>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_analyser_l_index"><a class="anchor" href="#_analyser_l_index"></a>6. Analyser l&#8217;index</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>En utilisant le paramètre précédent, chercher les films dont un des <em>genre</em> est "thriller". Quel est le résultat?</p>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2018-03-27 20:57:56 UTC
+</div>
+</div>
+</body>
+</html>
