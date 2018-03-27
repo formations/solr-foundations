@@ -99,8 +99,8 @@ http://localhost:8983/solr/admin/cores?action=CREATE&name=films&instanceDir=film
 
 Il est possible de vérifier le succès de l'opération:
 
-1. dans le système de fichiers: `server/solr/films`
-1. dans http://localhost:8983/solr/#/~cores/films[l'interface graphique^]
+. dans le système de fichiers: `server/solr/films`
+. dans http://localhost:8983/solr/#/~cores/films[l'interface graphique^]
 
 === Ajout de données
 
@@ -161,8 +161,8 @@ L'ajout d'entrées dans l'index est séquentiel. Vérifier que les entrées pré
 
 Pour modifier le schéma, deux options sont possibles :
 
-1. Editer le fichier `server/solr/films/conf/managed-schema`. Il est alors nécessaire de redémarrer le serveur pour prendre en compte les modifications. De plus, l'accès au système de fichiers n'est généralement pas autorisé.
-1. Exécuter un appel l'https://cwiki.apache.org/confluence/display/solr/Schema+API[API de gestion de schéma^]
+. Editer le fichier `server/solr/films/conf/managed-schema`. Il est alors nécessaire de redémarrer le serveur pour prendre en compte les modifications. De plus, l'accès au système de fichiers n'est généralement pas autorisé.
+. Exécuter un appel l'https://cwiki.apache.org/confluence/display/solr/Schema+API[API de gestion de schéma^]
 
 En utilisant l'une des deux méthodes proposées, de préférence la seconde, modifier le type du champ `name` en `text_general`.
 
@@ -209,7 +209,7 @@ Analyser la réponse retournée :
 * Le nombre d'éléments totaux
 * La différence entre la structure de la réponse et la structure du fichier JSON original (`example/films/films.json`)
 
-### Quelques fonctionnalités
+=== Quelques fonctionnalités
 
 Limite des champs de résultat:: // TODO
 Limite du nombre d'éléments:: Par défaut, le nombre d'éléments retournés est de 10. Cette valeur par défaut peut être modifiée à l'aide du paramètre `rows`.
@@ -229,9 +229,9 @@ Effectuer la même requête mais en limitant le terme au champ `name`. Comparer 
 // http://localhost:8983/solr/films/select?q=name:john
 Opérateurs booléens:: Le paramètre `q` accepte la combinaison de termes via les opérateurs booléens `AND` et `OR`. Cette combinaison peut être appliquée que le terme s'applique à un champ ou non.
 +
-1. Limiter les résultats aux éléments comprenant le terme "john" et "thriller".
+. Limiter les résultats aux éléments comprenant le terme "john" et "thriller".
 // http://localhost:8983/solr/films/select?q=john%20AND%20thriller
-1. Puis, exécuter une nouvelle requête en limitant les résultats comportant les termes "fun" dans le champ `name` et "Comedy" dans le champ `genre`.
+. Puis, exécuter une nouvelle requête en limitant les résultats comportant les termes "fun" dans le champ `name` et "Comedy" dans le champ `genre`.
 // http://localhost:8983/solr/films/select?q=name:fun%20AND%20genre:Comedy
 Recherche à facettes:: La https://fr.wikipedia.org/wiki/Recherche_%C3%A0_facettes[recherche à facettes^] permet d'implémenter la fonctionnalité "classique" de recherche par catégorie dans les sites d'e-commerce, par exemple par couleur. Si l'on adopte un point de vue SQL, il s'agit de la combinaison de commandes `GROUP BY` et `COUNT`.
 +
@@ -257,8 +257,6 @@ Par défaut, la balise est `<em>` mais il est possible de personnaliser le balis
 Exécuter à nouveau la requête sur le terme "john" dans le champ `name` en activant cette fois le balisage sur ce champ. Analyse la structure du résultat.
 // http://localhost:8983/solr/films/select?q=name:john&hl=true&hl.fl=name
 
-## Analyser l'index
+== Analyser l'index
 
 En utilisant le paramètre précédent, chercher les films dont un des _genre_ est "thriller". Quel est le résultat?
-
-Champs multi-valués:: l
